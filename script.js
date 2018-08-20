@@ -130,6 +130,42 @@ function initmap(){
         });
         //map.fitBounds(bounds);
      }
+     document.getElementById('zoom-to-area').addEventListener('click',function (){
+       zoomToArea();
+     });
+
+     function zoomToArea(){
+      var geocoder = new google.maps.Geocoder();
+      var address=  document.getElementById('zoom-to-area-text').value;
+      console.log('Address='+address);
+      if (address==''){
+        window.alert('You must provide an address');
+      }
+      else{
+        geocoder.geocode(
+          {address:address,
+          componentRestrictions : {locality:'New York'}},
+          function (result, status){
+            if (status== google.maps.GeocoderStatus.OK){
+              formattedAddress=result[0].formatted_address;
+              var  latitude=result[0].geometry.location.lat() ;
+              var longitude=result[0].geometry.location.lng();
+
+              var fa = document.getElementById('formattedAddress');
+              fa.innerHTML += `Formatted Address= ${formattedAddress}`;
+              var latlng= document.getElementById('latlng');
+              latlng.innerHTML +=`Latitude=${latitude} , Longitude=${longitude}`;
+
+              
+              map.setCenter(result[0].geometry.location);
+              map.setZoom(15);
+            }else{
+              window.alert('Address not reachable');
+            }
+          }
+           );
+      }
+    };
     function populateInfoWindow (marker, infoWindow){
         if (infoWindow.marker!=marker)
         {
@@ -138,8 +174,15 @@ function initmap(){
             infoWindow.open (map, marker);
             infoWindow.addListener('click',function (){
             infoWindow.setMarker(null);
-
             });
+            var streetViewService=  new google.maps.StreetViewService();
+            var radius=50;
+            streetViewService.getPanaromaByLocation (marker.position, radius,getstreetview);
+
+            function getstreetview(){
+                var nearStreetViewLocation =data.location.latlng;
+                var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation,marker.position);
+            }
         }
     }
 }
