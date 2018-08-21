@@ -88,20 +88,20 @@ function initmap(){
         mapTypeControl: false
     });
     
-    var locations =[{title: 'Park Ave Penthouse', location :{lat:40.7713024 ,lng:-73.9632393 }},  
-      {title: 'tribeca', location :{lat:40.719526,lng:-74.0089934}},
-      {title:'Bondi Beach',location :{lat:-33.890542,lng:151.274856}},
-      {title:'Cronulla Beach',location :{lat:-34.028249,lng: 151.157507}},
-      {title:'Manly Beach',location :{lat:-33.80010128657071,lng:151.28747820854187}},
-      {title:'Maroubra Beach',location :{lat:-33.950198,lng:151.259302}},
-    ];  
-
-    
+    var locations = [
+      {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+      {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+      {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
+      {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
+      {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
+      {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
+    ];   
 
     var largeInfowindow= new google.maps.InfoWindow();
     var bounds= new google.maps.LatLngBounds();
     var defaulticon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     var hovericon ='http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+    
     for (var i =0;i<locations.length;i++){
         var  position = locations[i].location;
         var  title= locations[i].title;
@@ -132,6 +132,9 @@ function initmap(){
      }
      document.getElementById('zoom-to-area').addEventListener('click',function (){
        zoomToArea();
+     });
+     document.getElementById('search-within-time').addEventListener('click', function (){
+      searchWithinTime();
      });
 
      function zoomToArea(){
@@ -185,6 +188,94 @@ function initmap(){
             }
         }
     }
-}
+    function searchWithinTime(){
+        var distanceMatrixService= new google.maps.DistanceMatrixService();
+        var address= document.getElementById('search-within-time-text').value;
+        if (address==''){
+          window.alert('Please enter an address');
+        }
+        else{
+          var origins=[];
+          for (var i=0;i<markers.length;i++){
+            origins[i]=markers[i].position ;
+          }
+          var destination =address;
+          var mode= document.getElementById('mode').value;
+          distanceMatrixService.getDistanceMatrix({
+            origins:origins,
+            destinations:[destination],
+            travelMode:   google.maps.TravelMode[mode],
+            unitSystem: google.maps.UnitSystem.IMPERIAL,
+          }, function (response, status){
+            if(status!=google.maps.DistanceMatrixStatus.OK){
+              console.log(status);
+              window.alert('error was: '+status);
+            }else{
+              displayMarkersWithinTime(response);
+            }
+          });
+        }
+    };
+
+    function displayMarkersWithinTime(response){
+      var maxDuration = document.getElementById('max-duration').value;
+      var origin = response.originAddresses;
+      var destination= response.destinationAddresses;
+      var atleastOne=false;
+      for (var i=0;i<origin.length;i++){
+        var results= response.rows[i].elements;
+        for (var j=0;j<results.length;j++){
+          var element = results[j];
+          if (element.status==='OK'){
+            var distanceText = element.distance.text;
+            var duration =  element.duration.value/60;
+            var durationText=element.duration.text;
+            if (duration <= maxDuration){
+              markers[i].setMap(map);
+              atleastOne=true;
+              var infowindow = new google.maps.InfoWindow({
+                content: durationText + ' away, ' + distanceText +
+                  '<div><input type=\"button\" value=\"View Route\" onClick =' +
+                  '\"displayDirections(&quot;' + origin[i] + '&quot;);\"></input></div>'
+              });
+              // document.getElementById('viewRoute').addEventListener('click',function (){
+              //     displayDirections(origins[i]);
+              // })
+              infowindow.open(map,markers[i]);
+              markers[i].infowindow=infowindow;
+              google.maps.event.addListener(markers[i], 'click', function() {
+                this.infowindow.close();
+              });
+            }
+          }
+        }
+
+      } }
+  };
+  function displayDirections(origin){
+    var directionsService = new google.maps.DirectionsService();
+    var destinationAddress=document.getElementById('search-within-time-text').value;
+    var mode= document.getElementById('mode').value;
+    directionsService.route({
+      origin:origin,
+      destination:destinationAddress,
+      travelMode: google.maps.TravelMode[mode]
+    }, function (response, status){
+      if (status===google.maps.DirectionsStatus.OK)
+      {
+        var directionsDisplay= new google.maps.DirectionsRenderer({
+          map:map,
+          directions:response,
+          draggabble:true,
+          polylineOPtions: {strokeColor: 'green'
+          }
+        });
+      }else{
+        window.alert('direction request failed due to '+status);
+      }
+    });
+
+  };
+
 
 initmap();

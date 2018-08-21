@@ -1,0 +1,11 @@
+
+https:maps.googleapis.com/maps/api/geocode/json?address=775+Park+Avenue,+New+York,+NY&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+latlng=33.1262476,-117.3115765&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+address=775+Park+Avenue,+New+York,+NY&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+latlng=40.714224,-73.961452
+elevation api : https:maps.googleapis.com/maps/api/elevation/json?locations=30.8681,79.0322&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+Distance matrix api:  https:maps.googleapis.com/maps/api/distancematrix/json?origins=New+York,+NY&destinations=San+Francisco&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+Direction api:  https:maps.googleapis.com/maps/api/directions/json?origin=Brooklyn&destination=75+9th+Ave,+New+York,NY&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+
+https://maps.googleapis.com/maps/api/directions/json?mode=transit&transit_mode=subway&transit_routing_preferences=less_walking&origin=Brooklyn&destination=75+9th+Ave,+New+York,NY&key=AIzaSyCcPzSyp1d86a1CeicC9tacYzJFssnEwOQ
+

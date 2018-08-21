@@ -8,8 +8,28 @@
 	<div >
 		<input id ='zoom-to-area-text' type='text'>
 		<input id ='zoom-to-area' type='button' value='zoom'>
-		<div id='formattedAddress'> </div>
-		<div  id='latlng'></div>
+		<!-- <div id='formattedAddress'> </div>
+		<div  id='latlng'></div> -->
+		<hr>
+		<div>
+			<span class='text'>Within</span>
+			<select id='max-duration'>
+				<option value='10'>10 mins</option>
+				<option value='15'>15 mins</option>
+				<option value='30'>30 mins</option>
+				<option value='60'>60 mins</option>
+			</select>
+			<select id='mode'>
+				<option value='DRIVING'>drive</option>
+				<option value='WALKING'>walk</option>
+				<option value='BICYCLING'>bike</option>
+				<option value='TRANSIT'>transit ride</option>
+			</select>
+			<span class='text'>of</span>
+			<input id='search-within-time-text'  type='text' placeholder='Enter Address'>
+			<input id='search-within-time'  type='button' value='Go'>
+			
+		</div>
 	</div>
 	<hr>
 	<div id="map">
